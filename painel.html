@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel — Atendente Virtual WhatsApp IA</title>
+  <style>
+    :root {
+      --bg: #0b141a;
+      --card: #111b21;
+      --card-border: #222e35;
+      --text: #e9edef;
+      --muted: #8696a0;
+      --accent: #00a884;
+      --accent-hover: #029070;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #38bdf8;
+      --input-bg: #202c33;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      font-size: 1.45rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 4px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .badge-success { background: rgba(0, 168, 132, 0.16); color: #34d399; border: 1px solid rgba(0, 168, 132, 0.4); }
+    .badge-warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .badge-danger  { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); }
+    .badge-info    { background: rgba(56, 189, 248, 0.15); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.35); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    @media (max-width: 880px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .card-full {
+      grid-column: 1 / -1;
+    }
+
+    .card-title {
+      font-size: 1.12rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .qr-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      background: #142229;
+      border: 1px dashed #2e444f;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .qr-box {
+      background: #ffffff;
+      padding: 12px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 240px;
+      min-height: 240px;
+    }
+
+    .qr-box img {
+      width: 220px;
+      height: 220px;
+      display: block;
+    }
+
+    .steps-list {
+      text-align: left;
+      font-size: 0.9rem;
+      color: var(--text);
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .connected-box {
+      background: rgba(0, 168, 132, 0.08);
+      border: 1px solid rgba(0, 168, 132, 0.3);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #d1d7db;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      background: var(--input-bg);
+      color: var(--text);
+      border: 1px solid #2f3e46;
+      border-radius: 9px;
+      padding: 10px 12px;
+      font-size: 0.92rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+    }
+
+    textarea {
+      min-height: 240px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 9px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s, opacity 0.15s;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-primary { background: var(--accent); color: #06211c; }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); color: #ffffff; }
+
+    .btn-secondary { background: #2a3942; color: var(--text); }
+    .btn-secondary:hover:not(:disabled) { background: #364854; }
+
+    .btn-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .btn-warning:hover:not(:disabled) { background: rgba(245, 158, 11, 0.3); }
+
+    .btn-danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .btn-danger:hover:not(:disabled) { background: rgba(239, 68, 68, 0.32); }
+
+    .btn-sm { padding: 6px 11px; font-size: 0.82rem; }
+
+    .alert-box {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      display: none;
+    }
+
+    .alert-success { background: rgba(0, 168, 132, 0.15); border: 1px solid rgba(0, 168, 132, 0.4); color: #6ee7b7; display: block; }
+    .alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; display: block; }
+
+    .list-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .list-item {
+      background: #162229;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.88rem;
+    }
+
+    .paused-item {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    details {
+      background: #162229;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #d1d7db;
+    }
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>🤖 Atendente Virtual WhatsApp IA</h1>
+        <p>Painel de Controle Prático, Seguro e Gratuito</p>
+      </div>
+      <div class="header-actions">
+        <span id="headerBotBadge" class="badge badge-success">Robô Ativo</span>
+        <button id="btnToggleBot" class="btn btn-warning" onclick="toggleBot()">Pausar Robô</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- CARTÃO 1: CONEXÃO DO WHATSAPP -->
+      <section class="card">
+        <div class="card-title">
+          <span>1. Conexão do WhatsApp</span>
+          <span id="waStatusBadge" class="badge badge-warning">Iniciando...</span>
+        </div>
+
+        <div id="waQrSection" class="qr-wrapper">
+          <div class="qr-box">
+            <img id="qrImage" src="" alt="QR Code do WhatsApp" style="display: none;" />
+            <span id="qrLoadingText" class="muted">Gerando QR Code, aguarde alguns segundos...</span>
+          </div>
+          <ol class="steps-list">
+            <li><strong>1.</strong> Abra o <strong>WhatsApp</strong> no seu celular.</li>
+            <li><strong>2.</strong> Toque em <strong>Aparelhos conectados</strong> (Menu ⋮ no Android ou Configurações no iPhone).</li>
+            <li><strong>3.</strong> Toque em <strong>Conectar um aparelho</strong> e aponte a câmera para o QR Code acima.</li>
+          </ol>
+        </div>
+
+        <div id="waConnectedSection" class="connected-box" style="display: none;">
+          <div>
+            <strong>✅ Conectado com sucesso!</strong>
+            <p class="muted" style="margin-top: 4px;">
+              Número conectado: <strong id="waPhone" style="color: var(--text);">—</strong>
+              <span id="waName"></span>
+            </p>
+          </div>
+          <p class="muted">
+            🛡️ <strong>Proteção Anti-Ban ativa:</strong> o robô simula digitação humana, agrupa mensagens seguidas e pausa automaticamente se você responder manualmente pelo celular.
+          </p>
+          <div>
+            <button class="btn btn-danger btn-sm" onclick="logoutWhatsApp()">Desconectar / Trocar Número</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- CARTÃO 2: INTELIGÊNCIA ARTIFICIAL -->
+      <section class="card">
+        <div class="card-title">
+          <span>2. Inteligência Artificial</span>
+          <span id="aiModeBadge" class="badge badge-success">✨ IA Generativa Gratuita Ativa</span>
+        </div>
+
+        <p class="muted" id="aiModeDesc">
+          O atendente já está operando com <strong>IA Generativa Gratuita</strong> + motor instantâneo fiel à sua Base de Conhecimento. Opcionalmente, você também pode conectar sua chave do <strong>Google Gemini</strong> abaixo:
+        </p>
+
+        <div class="row">
+          <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">
+            🔑 Criar Chave Gratuita no Google AI Studio
+          </a>
+        </div>
+
+        <div>
+          <label for="geminiApiKey">Chave da API Google Gemini (GEMINI_API_KEY)</label>
+          <div class="row">
+            <input type="password" id="geminiApiKey" placeholder="Cole sua chave começando com AIza..." style="flex: 1;" />
+            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleKeyVisibility()">👁️</button>
+          </div>
+        </div>
+
+        <div>
+          <label for="geminiModel">Modelo Rápido</label>
+          <select id="geminiModel">
+            <option value="gemini-2.0-flash">gemini-2.0-flash (Mais rápido e recomendado)</option>
+            <option value="gemini-1.5-flash">gemini-1.5-flash (Alternativa estável)</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <button id="btnSaveAi" class="btn btn-primary" onclick="saveAiKey()">Salvar e Ativar IA Gemini</button>
+        </div>
+
+        <div id="aiFeedback" class="alert-box"></div>
+      </section>
+
+      <!-- CARTÃO 3: BASE DE CONHECIMENTO -->
+      <section class="card card-full">
+        <div class="card-title">
+          <span>3. O que o Atendente Deve Responder (Base de Conhecimento)</span>
+          <button class="btn btn-secondary btn-sm" onclick="loadKnowledge(true)">Recarregar do Arquivo</button>
+        </div>
+        <p class="muted">
+          Escreva aqui os horários, serviços, preços, formas de pagamento e dúvidas frequentes. O atendente só responderá com base no que estiver aqui (aplicação instantânea sem reiniciar!).
+        </p>
+
+        <div>
+          <label for="baseConhecimento">Informações do seu Negócio / Atendimento</label>
+          <textarea id="baseConhecimento" placeholder="Carregando..."></textarea>
+        </div>
+
+        <details open style="margin-top: 16px;">
+          <summary>💬 Respostas Automáticas do Robô (Edição Rápida)</summary>
+          <p class="muted" style="margin-top: 8px;">
+            Edite abaixo exatamente o que o robô responde no WhatsApp. Ao salvar, a mudança vale na hora (sem reiniciar). Você pode usar <code>{{saudacao_hora}}</code> para Bom dia / Boa tarde / Boa noite automático.
+          </p>
+          <div class="settings-grid">
+            <div>
+              <label for="respSaudacao">1ª Saudação (Quando o cliente chama pela 1ª vez)</label>
+              <textarea id="respSaudacao" style="min-height: 95px;"></textarea>
+            </div>
+            <div>
+              <label for="respSaudacaoCurta">Saudação Curta (Se o cliente disser "Oi" / "Tudo bem" de novo)</label>
+              <textarea id="respSaudacaoCurta" style="min-height: 95px;"></textarea>
+            </div>
+            <div>
+              <label for="respPerguntaOrcamento">Pedido de Dados para Orçamento</label>
+              <textarea id="respPerguntaOrcamento" style="min-height: 95px;"></textarea>
+            </div>
+            <div>
+              <label for="respFechamentoResumo">Confirmação Final (Após cliente passar nome e serviço)</label>
+              <textarea id="respFechamentoResumo" style="min-height: 95px;"></textarea>
+            </div>
+            <div>
+              <label for="respCatalogo">Catálogo de Produtos e Serviços</label>
+              <textarea id="respCatalogo" style="min-height: 95px;"></textarea>
+            </div>
+            <div>
+              <label for="respHorario">Horário de Atendimento</label>
+              <textarea id="respHorario" style="min-height: 85px;"></textarea>
+            </div>
+            <div>
+              <label for="respPrazo">Prazo / Entrega do Orçamento</label>
+              <textarea id="respPrazo" style="min-height: 85px;"></textarea>
+            </div>
+            <div>
+              <label for="respInstalacao">Prazo e Agendamento de Instalação / Pedido</label>
+              <textarea id="respInstalacao" style="min-height: 95px;"></textarea>
+            </div>
+            <div>
+              <label for="respVisita">Visita Técnica e Região de Atendimento</label>
+              <textarea id="respVisita" style="min-height: 85px;"></textarea>
+            </div>
+            <div>
+              <label for="respManutencao">Manutenção, Limpeza Técnica e Conserto</label>
+              <textarea id="respManutencao" style="min-height: 95px;"></textarea>
+            </div>
+            <div>
+              <label for="respPagamento">Preço, Nota Fiscal e Formas de Pagamento</label>
+              <textarea id="respPagamento" style="min-height: 85px;"></textarea>
+            </div>
+            <div>
+              <label for="respGarantia">Garantia Técnica dos Produtos e Serviços</label>
+              <textarea id="respGarantia" style="min-height: 85px;"></textarea>
+            </div>
+            <div>
+              <label for="respMaterial">Comparativo Técnico (Inox 304 vs 430 vs Galvanizado)</label>
+              <textarea id="respMaterial" style="min-height: 95px;"></textarea>
+            </div>
+            <div>
+              <label for="respNormas">Normas Técnicas (NBR 14518, ANVISA, Bombeiros, ART/CREA)</label>
+              <textarea id="respNormas" style="min-height: 95px;"></textarea>
+            </div>
+            <div>
+              <label for="respFumacaOdor">Fumaça, Gordura, Cheiro/Odor e Lavador de Gases</label>
+              <textarea id="respFumacaOdor" style="min-height: 95px;"></textarea>
+            </div>
+            <div>
+              <label for="respConfirmacao">Resposta Curta de Confirmação ("Certo", "Ok", "Entendi")</label>
+              <textarea id="respConfirmacao" style="min-height: 75px;"></textarea>
+            </div>
+            <div>
+              <label for="respDespedida">Mensagem de Despedida ("Tchau", "Até mais")</label>
+              <textarea id="respDespedida" style="min-height: 75px;"></textarea>
+            </div>
+            <div>
+              <label for="respHumano">Aviso Quando o Cliente Pede para Falar Direto Comigo</label>
+              <textarea id="respHumano" style="min-height: 75px;"></textarea>
+            </div>
+            <div>
+              <label for="respFallback">Resposta Padrão (Quando vou conferir algum detalhe técnico)</label>
+              <textarea id="respFallback" style="min-height: 85px;"></textarea>
+            </div>
+          </div>
+          <div style="margin-top: 12px;">
+            <label for="respExtras">Respostas Extras por Palavra-Chave (uma regra por linha — aceita vários gatilhos separados por vírgula: palavra1, palavra2 = resposta)</label>
+            <textarea id="respExtras" style="min-height: 180px;" placeholder="garantia = Todos os serviços possuem garantia técnica conforme contrato."></textarea>
+          </div>
+        </details>
+
+        <details>
+          <summary>⚙️ Configurações Avançadas de Segurança e Regras da IA (Opcional)</summary>
+          <div class="settings-grid">
+            <div>
+              <label for="humanHandoffMinutes">Pausa após intervenção humana (minutos)</label>
+              <input type="number" id="humanHandoffMinutes" min="1" max="1440" value="60" />
+            </div>
+            <div>
+              <label for="debounceMs">Espera para ler e agrupar mensagens seguidas (ms)</label>
+              <input type="number" id="debounceMs" min="500" max="120000" step="500" value="20000" />
+            </div>
+            <div>
+              <label for="minTypingDelayMs">Tempo simulando digitação "digitando..." (ms)</label>
+              <input type="number" id="minTypingDelayMs" min="1000" max="120000" step="500" value="25000" />
+            </div>
+          </div>
+          <div style="margin-top: 12px;">
+            <label for="systemPrompt">Instruções de Comportamento e Segurança (System Prompt)</label>
+            <textarea id="systemPrompt" style="min-height: 150px;"></textarea>
+          </div>
+        </details>
+
+        <div class="row">
+          <button id="btnSaveKnowledge" class="btn btn-primary" onclick="saveKnowledge()">Salvar Informações e Respostas Agora</button>
+        </div>
+        <div id="knowledgeFeedback" class="alert-box"></div>
+      </section>
+
+      <!-- CARTÃO 4: CONVERSAS RECENTES E PAUSA HUMANA -->
+      <section class="card">
+        <div class="card-title">
+          <span>4. Contatos em Atendimento Humano</span>
+          <span id="pausedCount" class="badge badge-info">0 pausados</span>
+        </div>
+        <p class="muted">
+          Quando você responde pelo celular ou o cliente pede um atendente, o robô pausa para aquele contato. Clique em <strong>Reativar Robô</strong> quando terminar.
+        </p>
+        <div id="pausedList" class="list-box">
+          <p class="muted">Nenhum contato pausado no momento.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-title">
+          <span>💬 Atividade e Respostas Recentes</span>
+        </div>
+        <div id="logsList" class="list-box">
+          <p class="muted">Nenhuma mensagem processada ainda.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    let knowledgeLoaded = false;
+
+    function showFeedback(elementId, message, isSuccess) {
+      const el = document.getElementById(elementId);
+      el.textContent = message;
+      el.className = 'alert-box ' + (isSuccess ? 'alert-success' : 'alert-error');
+      setTimeout(() => {
+        if (el.textContent === message) {
+          el.className = 'alert-box';
+        }
+      }, 6000);
+    }
+
+    function toggleKeyVisibility() {
+      const input = document.getElementById('geminiApiKey');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    async function fetchStatus() {
+      try {
+        const res = await fetch('/api/status');
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // Cabeçalho - Bot Ativo/Pausado
+        const headerBadge = document.getElementById('headerBotBadge');
+        const btnToggle = document.getElementById('btnToggleBot');
+        if (data.botEnabled) {
+          headerBadge.textContent = 'Robô Ativo';
+          headerBadge.className = 'badge badge-success';
+          btnToggle.textContent = 'Pausar Robô';
+          btnToggle.className = 'btn btn-warning';
+        } else {
+          headerBadge.textContent = 'Robô Pausado';
+          headerBadge.className = 'badge badge-danger';
+          btnToggle.textContent = 'Ativar Robô';
+          btnToggle.className = 'btn btn-primary';
+        }
+
+        // Cartão 1 - WhatsApp
+        const waBadge = document.getElementById('waStatusBadge');
+        const qrSection = document.getElementById('waQrSection');
+        const connSection = document.getElementById('waConnectedSection');
+        const qrImage = document.getElementById('qrImage');
+        const qrLoading = document.getElementById('qrLoadingText');
+
+        if (data.status === 'open') {
+          waBadge.textContent = 'Conectado ao WhatsApp ✅';
+          waBadge.className = 'badge badge-success';
+          qrSection.style.display = 'none';
+          connSection.style.display = 'flex';
+          document.getElementById('waPhone').textContent = data.connectedNumber || 'Conectado';
+          document.getElementById('waName').textContent = data.connectedName ? ` (${data.connectedName})` : '';
+        } else {
+          connSection.style.display = 'none';
+          qrSection.style.display = 'flex';
+          if (data.status === 'qr' && data.qrDataUrl) {
+            waBadge.textContent = 'Aguardando QR Code';
+            waBadge.className = 'badge badge-warning';
+            qrImage.src = data.qrDataUrl;
+            qrImage.style.display = 'block';
+            qrLoading.style.display = 'none';
+          } else {
+            waBadge.textContent = data.status === 'close' ? 'Reconectando...' : 'Conectando...';
+            waBadge.className = 'badge badge-info';
+            qrImage.style.display = 'none';
+            qrLoading.style.display = 'block';
+          }
+        }
+
+        // Cartão 2 - Status IA
+        const aiBadge = document.getElementById('aiModeBadge');
+        const aiDesc = document.getElementById('aiModeDesc');
+        if (data.hasGeminiKey) {
+          aiBadge.textContent = '✨ IA Google Gemini Ativa';
+          aiBadge.className = 'badge badge-success';
+          aiDesc.innerHTML = 'Sua chave do <strong>Google Gemini</strong> está configurada e ativa! Em caso de oscilação, a IA gratuita de contingência assume automaticamente.';
+        } else {
+          aiBadge.textContent = '✨ IA Generativa Gratuita Ativa';
+          aiBadge.className = 'badge badge-success';
+          aiDesc.innerHTML = 'O atendente está operando com <strong>IA Generativa Gratuita Integrada</strong> + motor instantâneo fiel à sua Base de Conhecimento (sem precisar de chave). Se desejar, você também pode conectar uma chave do <strong>Google Gemini</strong> abaixo:';
+        }
+
+        // Cartão 4 - Pausados
+        const pausedList = document.getElementById('pausedList');
+        const pausedCount = document.getElementById('pausedCount');
+        const paused = data.pausedContacts || [];
+        pausedCount.textContent = `${paused.length} pausado(s)`;
+        if (paused.length === 0) {
+          pausedList.innerHTML = '<p class="muted">Nenhum contato pausado no momento.</p>';
+        } else {
+          pausedList.innerHTML = paused.map(item => `
+            <div class="list-item paused-item">
+              <div>
+                <strong>${escapeHtml(item.contact)}</strong><br/>
+                <span class="muted">Pausado por mais ${item.remainingMinutes} min</span>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="unpauseContact('${escapeAttr(item.jid)}')">Reativar Robô</button>
+            </div>
+          `).join('');
+        }
+
+        // Cartão 4 - Logs Recentes
+        const logsList = document.getElementById('logsList');
+        const logs = data.recentLogs || [];
+        if (logs.length === 0) {
+          logsList.innerHTML = '<p class="muted">Nenhuma mensagem processada ainda.</p>';
+        } else {
+          logsList.innerHTML = logs.map(log => `
+            <div class="list-item">
+              <div class="row" style="justify-content: space-between;">
+                <strong>${escapeHtml(log.contact)}</strong>
+                <span class="muted">${escapeHtml(log.time)} • ${log.source === 'gemini' ? '✨ Gemini IA' : (log.source === 'ia-cloud' ? '✨ IA Inteligente' : '⚡ Instantâneo')}</span>
+              </div>
+              <div><span class="muted">Cliente:</span> ${escapeHtml(log.incoming)}</div>
+              <div><span class="muted">Robô:</span> ${escapeHtml(log.reply)}</div>
+            </div>
+          `).join('');
+        }
+      } catch (err) {
+        console.error('Erro ao atualizar status:', err);
+      }
+    }
+
+    const RESPONSE_FIELD_MAP = {
+      respSaudacao: 'saudacao',
+      respSaudacaoCurta: 'saudacaoCurta',
+      respPerguntaOrcamento: 'perguntaOrcamento',
+      respFechamentoResumo: 'fechamentoResumo',
+      respCatalogo: 'respostaCatalogo',
+      respHorario: 'respostaHorario',
+      respPrazo: 'respostaPrazo',
+      respInstalacao: 'respostaInstalacao',
+      respVisita: 'respostaVisita',
+      respManutencao: 'respostaManutencao',
+      respPagamento: 'respostaPagamento',
+      respGarantia: 'respostaGarantia',
+      respMaterial: 'respostaMaterial',
+      respNormas: 'respostaNormas',
+      respFumacaOdor: 'respostaFumacaOdor',
+      respConfirmacao: 'respostaConfirmacao',
+      respDespedida: 'respostaDespedida',
+      respHumano: 'respostaHumano',
+      respFallback: 'respostaFallback',
+      respExtras: 'respostasExtras'
+    };
+
+    async function loadKnowledge(forceNotify = false) {
+      try {
+        const res = await fetch('/api/knowledge');
+        if (!res.ok) return;
+        const data = await res.json();
+        document.getElementById('baseConhecimento').value = data.baseConhecimento || '';
+        document.getElementById('systemPrompt').value = data.systemPrompt || '';
+        document.getElementById('geminiModel').value = data.geminiModel || 'gemini-2.0-flash';
+        document.getElementById('humanHandoffMinutes').value = data.humanHandoffMinutes || 60;
+        document.getElementById('debounceMs').value = data.debounceMs || 20000;
+        document.getElementById('minTypingDelayMs').value = data.minTypingDelayMs || 25000;
+        const customResponses = data.customResponses || {};
+        for (const [elId, key] of Object.entries(RESPONSE_FIELD_MAP)) {
+          const el = document.getElementById(elId);
+          if (el) el.value = customResponses[key] || '';
+        }
+        if (data.geminiApiKey) {
+          document.getElementById('geminiApiKey').value = data.geminiApiKey;
+        }
+        knowledgeLoaded = true;
+        if (forceNotify) {
+          showFeedback('knowledgeFeedback', 'Arquivos recarregados do disco.', true);
+        }
+      } catch (err) {
+        console.error('Erro ao carregar conhecimento:', err);
+      }
+    }
+
+    async function saveAiKey() {
+      const btn = document.getElementById('btnSaveAi');
+      const geminiApiKey = document.getElementById('geminiApiKey').value.trim();
+      const geminiModel = document.getElementById('geminiModel').value;
+
+      btn.disabled = true;
+      btn.textContent = 'Validando e Salvando...';
+      try {
+        const res = await fetch('/api/save-config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ geminiApiKey, geminiModel, validateKey: true })
+        });
+        const data = await res.json();
+        showFeedback('aiFeedback', data.message || (data.ok ? 'Salvo com sucesso!' : 'Erro ao salvar.'), data.ok);
+        await fetchStatus();
+      } catch (err) {
+        showFeedback('aiFeedback', 'Erro de conexão com o painel local.', false);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Salvar e Ativar IA Gemini';
+      }
+    }
+
+    async function saveKnowledge() {
+      const btn = document.getElementById('btnSaveKnowledge');
+      const baseConhecimento = document.getElementById('baseConhecimento').value;
+      const systemPrompt = document.getElementById('systemPrompt').value;
+      const humanHandoffMinutes = Number(document.getElementById('humanHandoffMinutes').value) || 60;
+      const debounceMs = Number(document.getElementById('debounceMs').value) || 20000;
+      const minTypingDelayMs = Number(document.getElementById('minTypingDelayMs').value) || 25000;
+      const customResponses = {};
+      for (const [elId, key] of Object.entries(RESPONSE_FIELD_MAP)) {
+        const el = document.getElementById(elId);
+        if (el) customResponses[key] = el.value;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Salvando...';
+      try {
+        const res = await fetch('/api/save-config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            baseConhecimento,
+            systemPrompt,
+            humanHandoffMinutes,
+            debounceMs,
+            minTypingDelayMs,
+            customResponses
+          })
+        });
+        const data = await res.json();
+        showFeedback('knowledgeFeedback', data.message || 'Informações e respostas salvas e aplicadas imediatamente!', data.ok);
+      } catch (err) {
+        showFeedback('knowledgeFeedback', 'Erro ao salvar informações.', false);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Salvar Informações e Respostas Agora';
+      }
+    }
+
+    async function toggleBot() {
+      try {
+        await fetch('/api/toggle-bot', { method: 'POST' });
+        await fetchStatus();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function unpauseContact(jid) {
+      try {
+        await fetch('/api/unpause', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jid })
+        });
+        await fetchStatus();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function logoutWhatsApp() {
+      if (!confirm('Deseja desconectar este WhatsApp para conectar outro número?')) return;
+      try {
+        await fetch('/api/logout', { method: 'POST' });
+        await fetchStatus();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function escapeAttr(str) {
+      return String(str || '').replace(/'/g, "\\'");
+    }
+
+    // Inicialização
+    loadKnowledge();
+    fetchStatus();
+    setInterval(fetchStatus, 2000);
+  </script>
+</body>
+</html>
