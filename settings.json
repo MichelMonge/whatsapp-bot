@@ -1,0 +1,15 @@
+{
+  "geminiApiKey": "",
+  "geminiModel": "gemini-1.5-flash",
+  "temperature": 0.25,
+  "debounceMs": 20000,
+  "minTypingDelayMs": 25000,
+  "maxTypingDelayMs": 35000,
+  "humanHandoffMinutes": 2,
+  "maxHistoryLength": 30,
+  "sessionTimeoutMinutes": 30,
+  "followUpHours": 48,
+  "respondToGroups": false,
+  "botEnabled": true,
+  "port": 3000
+}
